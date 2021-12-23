@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Contactees.Web.Models.Person>
+@{
+    ViewData["Title"] = "Contactees";
+
+}
+
+<div><b>People Table</b><br /></div>
+
+<a href="#personModal" class="create-person" data-toggle="modal">Insert new person</a>
+
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>First Name </th>
+        <th>Last Name </th>
+        <th>National ID Number</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>@d.Name</td>
+            <td>@d.Surname</td>
+            <td>@d.IdNumber</td>
+            <td>
+                <a href="#personModal" class="edit" data-toggle="modal"><i class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit Person">&#xE254;</i>Edit</a>
+                <input type="hidden" class="id" value="@d.Id" />
+            </td>
+            <td>
+                <a href="#personModal" class="delete" data-toggle="modal"><i class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete Person">&#xE254;</i>Delete</a>
+                <input type="hidden" class="id" value="@d.Id" />
+            </td>
+
+        </tr>
+
+    }
+</table>
+
+<div id="personModal" class="modal fade modalEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-inner-content" style="margin:10pt">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('table .edit').on('click', function () {
+                $('.modal-inner-content').html("");
+                var id = $(this).parent().find('.id').val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/Home/PersonEditForm/' + id,
+                    success: function (editPersonView) {
+                        $('.modal-inner-content').html(editPersonView);
+                    }
+                })
+            })
+
+            $('.create-person').on('click', function () {
+                $('.modal-inner-content').html("");
+                $.ajax({
+                    type: 'GET',
+                    url: '/Home/PersonCreateForm',
+                    success: function (createPersonView) {
+                        $('.modal-inner-content').html(createPersonView);
+                    }
+                })
+            })
+
+            $('table .delete').on('click', function () {
+                $('.modal-inner-content').html("");
+                var id = $(this).parent().find('.id').val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/Home/PersonDeleteForm/' + id,
+                    success: function (editPersonView) {
+                        $('.modal-inner-content').html(editPersonView);
+                    }
+                })
+            })
+        });
+    </script>
+}
